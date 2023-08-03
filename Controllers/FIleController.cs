@@ -19,8 +19,8 @@ namespace FileApi.Controllers
         [Route("file")]
         public async Task<IActionResult> Uplaod([FromForm] FileModels file)
         {
-            await _fileServices.Upload(file);
-            return Ok();
+            var fileUpload = await _fileServices.Upload(file);
+            return Ok(fileUpload);
         }
 
         [HttpGet]

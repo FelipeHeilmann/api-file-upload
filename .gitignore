@@ -3,3 +3,4 @@ obj/
 wwwroot/
 Properties
 appsettings.json
+appsettings.Development.json

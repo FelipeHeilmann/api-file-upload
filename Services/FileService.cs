@@ -12,7 +12,7 @@ namespace FileApi.Services
             _blobServiceClient = blobServiceClient;
         }
 
-        public async Task Upload(FileModels fileModel)
+        public async Task<String> Upload(FileModels fileModel)
         {
             string originalFileName = Path.GetFileName(fileModel.ImageFile.FileName);
 
@@ -23,6 +23,8 @@ namespace FileApi.Services
             var blobInstance = containerInstance.GetBlobClient(uniqueFileName);
 
             await blobInstance.UploadAsync(fileModel.ImageFile.OpenReadStream());
+
+            return uniqueFileName;
         }
 
         public async Task<Stream> Get(string name)
