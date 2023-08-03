@@ -1,4 +1,5 @@
 bin/
 obj/
+wwwroot/
 Properties
 appsettings.json

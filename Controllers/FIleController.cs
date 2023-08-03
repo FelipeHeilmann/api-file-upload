@@ -1,38 +1,42 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using FileApi.Models;
+using FileApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileApi.Controllers
 {
     [ApiController]
     [Route("api")]
-    public class FIleController : ControllerBase
+    public class FileController : ControllerBase
     {
-        [HttpPost("file")]
-        public ActionResult<String> UploadImage([FromForm] IFormFile file)
+        public readonly IFileService _fileServices;
+
+        public FileController(IFileService fileService)
         {
-            try
+            _fileServices = fileService;
+        }
+
+        [HttpPost]
+        [Route("file")]
+        public async Task<IActionResult> Uplaod([FromForm] FileModels file)
+        {
+            await _fileServices.Upload(file);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("file")]
+        public async Task<IActionResult> Get(string name)
+        {
+            var image = await _fileServices.Get(name);
+            string fileType = "jpg";
+
+            if (fileType.Contains("png"))
             {
-                // getting file original name
-                string FileName = file.FileName;
-
-                // combining GUID to create unique name before saving in wwwroot
-                string uniqueFileName = Guid.NewGuid().ToString() + "-" + FileName;
-
-                // getting full path inside wwwroot/images
-                var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/", uniqueFileName);
-
-                // copying file
-                file.CopyTo(new FileStream(imagePath, FileMode.Create));
-
-                return "File Uploaded Successfully";
+                fileType = "png";
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+
+            return File(image, $"image/{fileType}");
         }
     }
+
 }
